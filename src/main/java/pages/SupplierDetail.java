@@ -25,4 +25,8 @@ public class SupplierDetail {
         String bookNowBtn = "(//*[text() = 'Book Online'])[1]";
         webSupport.getElement(bookNowBtn).click();
     }
+
+    public boolean isPhoneNumberDisplayed(){
+        return  webSupport.getElement(phoneNumberLocator).isDisplayed();
+    }
 }

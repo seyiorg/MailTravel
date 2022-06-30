@@ -43,10 +43,7 @@ public class MailTravelTest {
         header.travelSearch("India");
         results.selectProduct("11 Days - Classic Escorted Tours");
 
-        Assert.assertTrue(supplierDetail.getDisplayedPhoneNos()
-                .equals(supplierDetail.getPhoneNumber1()) | supplierDetail.getDisplayedPhoneNos()
-                .equals(supplierDetail.getPhoneNumber2()));
-        //assert days and price displayed
+        Assert.assertTrue(supplierDetail.isPhoneNumberDisplayed());
 
         supplierDetail.bookOnline();
         bookingPage.fillDateDepartureForm();
