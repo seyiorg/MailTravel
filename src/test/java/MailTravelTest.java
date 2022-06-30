@@ -1,5 +1,7 @@
 import model.Employee;
 import model.EmployeeBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.Assert;
 import pages.*;
 import org.openqa.selenium.WebDriver;
@@ -9,6 +11,7 @@ import org.testng.annotations.Test;
 import support.EmployeeApiSupport;
 import support.CreateWebDriver;
 import support.WebSupport;
+
 import java.io.IOException;
 
 public class MailTravelTest {
@@ -22,6 +25,7 @@ public class MailTravelTest {
     static SupplierDetail supplierDetail;
     static BookingPage bookingPage;
     static BookingSummary bookingSummary;
+    static Logger log;
 
     @BeforeClass
     public static void startUp() throws IOException {
@@ -30,10 +34,11 @@ public class MailTravelTest {
         aSupport = new EmployeeApiSupport();
         aEmployee = new EmployeeBuilder();
         header = new Header(driver);
-        results =new Results(driver);
-        supplierDetail =new SupplierDetail(driver);
+        results = new Results(driver);
+        supplierDetail = new SupplierDetail(driver);
         bookingPage = new BookingPage(driver);
         bookingSummary = new BookingSummary(driver);
+        log = LoggerFactory.getLogger(CreateWebDriver.class);
     }
 
     @Test
@@ -42,16 +47,21 @@ public class MailTravelTest {
         wSupport.gotoPage("https://www.mailtravel.co.uk/");
         header.travelSearch("India");
         results.selectProduct("11 Days - Classic Escorted Tours");
-
         Assert.assertTrue(supplierDetail.isPhoneNumberDisplayed());
-
         supplierDetail.bookOnline();
         bookingPage.fillDateDepartureForm();
         bookingPage.fillAccommodationForm();
         bookingPage.fillExtrasForm();
         bookingPage.fillPassengerDetailsForm();
         bookingPage.fillPaymentForm();
-        Assert.assertEquals(bookingSummary.getActualDisplayedAmount(), bookingSummary.getTotalBookingAmount());
+        try {
+            Assert.assertEquals(bookingSummary.getActualDisplayedAmount(), bookingSummary.getTotalBookingAmount());
+        } catch (AssertionError e) {
+            log.error("********************************** Expected Total: " +
+                    bookingSummary.getTotalBookingAmount() +
+                    "  Total Displayed: " + bookingSummary.getActualDisplayedAmount());
+            log.error(e.toString());
+        }
     }
 
     @Test
